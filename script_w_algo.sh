@@ -1,4 +1,4 @@
-#Notification de démarrage du script
+#Notification de démarrage du scriptz
 curl \
         -H "Title: Demarrage script" \
         -H "Tags: heavy_check_mark," \
