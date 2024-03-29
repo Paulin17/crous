@@ -16,8 +16,10 @@ debut(){ #Ici on reinitialise tout les variables
     nbrepas_tmp=0
     unset jl
     unset jl_ok
+    unset jl_notif
     declare -a jl
     declare -a jl_ok
+    declare -a jl_notif
 }
 
 download_index(){ #Met dans $code_html le code de la page principale 
@@ -89,7 +91,7 @@ notif(){ #Prend un parametre un nombre de repas et un tableau contenant les jour
     ntfy.sh/repas_crous #envoie une requette de notification
 }
 
-wait_samedi(){
+wait_samedi(){ #Attend le prochain samedi a 00h01
     next_saturday=$(date -d 'next Saturday 00:01' +'%s')
     current_time=$(date +'%s')
     time_to_wait=$((next_saturday - current_time))
@@ -124,8 +126,16 @@ while true ; do
         check_forms
         echo "Jour vérifié"
         if [ "$nbrepas_tmp" -lt "$nb_repas" ];then
-            notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_ok[@]}"
-            nbrepas_tmp=$nb_repas
+        for k in ${jl_ok[@]};do #pr i parcourant tout les élément de jl_ok
+            if grep -q "$k" <<< "${jl_notif[*]}";then #si il sont déjant ds les jours notifié
+                :
+            else
+                jl_notif+=("$k")
+            fi
+        done
+        notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
+        nbrepas_tmp=$nb_repas
+        jl_notif=("${jl_ok[@]}")
 
         fi
         if [ "$nb_repas" -gt 9 ] || [ "$(cat pause)" -eq 1 ]; then
