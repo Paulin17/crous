@@ -62,11 +62,11 @@ get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont d
 
 check_forms(){ #Vérifie si le formulaire est valide (2 option pour chaque select). $jl_ok avec les jours commandable
     i=1
-    jl_ok=''
+    unset jl_ok
+    declare -a jl_ok
     for fichier in tmp/*; do #Pour chaque fichier dans tmp
-        jl_ok=''
         #on initialise les jour ok
-        jour_actuel=${jl_type[$(($i - 1))]}
+        jour_actuel=${jl_type[$(($i))]}
         nb_form_ok=$(cat $fichier | grep -no '<select.*<option.*</option>.*<option.*</option>.*</select>'| sed 's/<\/select>/\~/g'|grep -o '~'|wc -w)
         if  [ "$nb_form_ok" -eq "6" ]; then
              echo "$jour_actuel - Formulaire OK : $nb_form_ok"
@@ -125,6 +125,7 @@ while true ; do
         get_link
         echo "Dowload+get_link fait"
         get_jour
+        echo
         check_forms
         echo "Jour vérifié"
 
@@ -147,7 +148,7 @@ while true ; do
             break
         fi
         echo "En attente de nouveau repas, prochaine tentative dans 60s"
-        sleep 60
+        sleep 3
     done
     wait_samedi
 done
