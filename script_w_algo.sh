@@ -62,8 +62,7 @@ get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont d
 
 check_forms(){ #Vérifie si le formulaire est valide (2 option pour chaque select). $jl_ok avec les jours commandable
     i=1
-    unset jl_ok
-    declare -a jl_ok
+    jl_ok=("")
     for fichier in tmp/*; do #Pour chaque fichier dans tmp
         #on initialise les jour ok
         jour_actuel=${jl_type[$(($i))]}
@@ -84,7 +83,6 @@ notif(){ #Prend un parametre un nombre de repas et un tableau contenant les jour
     for i in "${@:2}"; do
         var+=$i/
     done
-    echo $var
     curl \
     -H "Title: "$1" Nouveau repas Disponibles" \
     -H "Tags: warning," \
@@ -128,17 +126,16 @@ while true ; do
         echo
         check_forms
         echo "Jour vérifié"
-
         if [ "$nbrepas_tmp" -lt "$nb_repas" ];then #Si y a de nouveau repas,
-        unset jl_notif
-        declare -a jl_notif
-        for k in ${jl_ok[@]};do #pr i parcourant tout les élément de jl_ok
-            if grep -q "$k" <<< "${jl_notifier[*]}";then #si il sont déja ds les jours notifié
-                : #ne rien faire
-            else
-                jl_notif+=("$k") #sinon l'a
-            fi
-        done
+            unset jl_notif
+            declare -a jl_notif
+            for k in ${jl_ok[@]};do #pr i parcourant tout les élément de jl_ok
+                if grep -q "$k" <<< "${jl_notifier[*]}";then #si il sont déja ds les jours notifié
+                    : #ne rien faire
+                else
+                    jl_notif+=("$k") #sinon l'ajouter au truc qui partent en notif
+                fi
+            done
         notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
         nbrepas_tmp=$nb_repas
         jl_notifier=("${jl_ok[@]}")
@@ -148,7 +145,7 @@ while true ; do
             break
         fi
         echo "En attente de nouveau repas, prochaine tentative dans 60s"
-        sleep 3
+        sleep 60
     done
     wait_samedi
 done
