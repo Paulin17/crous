@@ -5,7 +5,6 @@ curl \
         -d "En attente de repas" \
         ntfy.sh/debug_repas_crous; #envoie une notification de démarrage
 
-
 url=https://crousandgo.crous-poitiers.fr/larochelle/categorie-produit/sites-la-rochelle/ #URL Crous
 
 debut(){ #Ici on reinitialise tout les variables
@@ -118,25 +117,28 @@ while true ; do
     echo "$nb_repas repas disponibles"
     nb_repas=-1
     while [ "$nb_repas" -lt 10 ]; do #Tant que le nombre de repas est inférieur a 10
+        #Affiche la date, télécharge le code, recupere les lien, en déduit les jour, et vérifie les forms 
+        date '+%Y-%m-%d %H:%M:%S'
         download_index
         get_link
         echo "Dowload+get_link fait"
         get_jour
         check_forms
         echo "Jour vérifié"
-        if [ "$nbrepas_tmp" -lt "$nb_repas" ];then
+
+        if [ "$nbrepas_tmp" -lt "$nb_repas" ];then #Si y a de nouveau repas,
         for k in ${jl_ok[@]};do #pr i parcourant tout les élément de jl_ok
-            if grep -q "$k" <<< "${jl_notif[*]}";then #si il sont déjant ds les jours notifié
-                :
+            if grep -q "$k" <<< "${jl_notif[*]}";then #si il sont déja ds les jours notifié
+                : #ne rien faire
             else
-                jl_notif+=("$k")
+                jl_notif+=("$k") #sinon l'a
             fi
         done
         notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
         nbrepas_tmp=$nb_repas
         jl_notif=("${jl_ok[@]}")
 
-        fi
+        fi #Si le nb de repas >9 aou que le contenue de pause est 1 on arrette le 
         if [ "$nb_repas" -gt 9 ] || [ "$(cat pause)" -eq 1 ]; then
             break
         fi
