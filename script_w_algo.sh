@@ -16,9 +16,11 @@ debut(){ #Ici on reinitialise tout les variables
     unset jl
     unset jl_ok
     unset jl_notif
+    unset jl_notifier
     declare -a jl
     declare -a jl_ok
     declare -a jl_notif
+    declare -a jl_notifier
 }
 
 download_index(){ #Met dans $code_html le code de la page principale 
@@ -127,8 +129,10 @@ while true ; do
         echo "Jour vérifié"
 
         if [ "$nbrepas_tmp" -lt "$nb_repas" ];then #Si y a de nouveau repas,
+        unset jl_notif
+        declare -a jl_notif
         for k in ${jl_ok[@]};do #pr i parcourant tout les élément de jl_ok
-            if grep -q "$k" <<< "${jl_notif[*]}";then #si il sont déja ds les jours notifié
+            if grep -q "$k" <<< "${jl_notifier[*]}";then #si il sont déja ds les jours notifié
                 : #ne rien faire
             else
                 jl_notif+=("$k") #sinon l'a
@@ -136,7 +140,7 @@ while true ; do
         done
         notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
         nbrepas_tmp=$nb_repas
-        jl_notif=("${jl_ok[@]}")
+        jl_notifier=("${jl_ok[@]}")
 
         fi #Si le nb de repas >9 aou que le contenue de pause est 1 on arrette le 
         if [ "$nb_repas" -gt 9 ] || [ "$(cat pause)" -eq 1 ]; then
