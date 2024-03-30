@@ -39,6 +39,7 @@ get_link(){ #Détecte si des repas sont en ligne, renvoie $nb_repas disponible +
 
 get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont dispo ($jl) et stoke les page dans tpm/
     jl=''
+    jl_type=''
     rm -R tmp/ 2>/dev/null
     mkdir tmp/
     for link in $repas_links; do
@@ -54,7 +55,6 @@ get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont d
         fi
         echo "$jour-$type"
         jl_type+=("$jour-$type") #Complemente la variable Jl(jours liste) avec les info du repas qui vient d'être traité
-        echo 
         echo $code_temp > "tmp/$traitement_temp.html"
     done
 
@@ -63,9 +63,9 @@ get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont d
 check_forms(){ #Vérifie si le formulaire est valide (2 option pour chaque select). $jl_ok avec les jours commandable
     i=1
     jl_ok=''
-    for fichier in tmp/*; do
+    for fichier in tmp/*; do #Pour chaque fichier dans tmp
+        jl_ok=''
         #on initialise les jour ok
-        #jour_actuel=$(echo "$jl_type"|cut -d '\' -f "$i")
         jour_actuel=${jl_type[$(($i - 1))]}
         nb_form_ok=$(cat $fichier | grep -no '<select.*<option.*</option>.*<option.*</option>.*</select>'| sed 's/<\/select>/\~/g'|grep -o '~'|wc -w)
         if  [ "$nb_form_ok" -eq "6" ]; then
