@@ -1,4 +1,4 @@
-#Notification de démarrage du scriptz
+#Notification de démarrage du script
 curl \
         -H "Title: Demarrage script" \
         -H "Tags: heavy_check_mark," \
@@ -116,7 +116,6 @@ while true ; do
         sleep 60
     done
     echo "$nb_repas repas disponibles"
-    #notif $(("$nb_repas"-"$nbrepas_tmp")) $rl_ok
     nb_repas=-1
     while [ "$nb_repas" -lt 10 ]; do #Tant que le nombre de repas est inférieur a 10
         download_index
