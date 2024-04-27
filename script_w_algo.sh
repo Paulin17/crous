@@ -7,7 +7,7 @@ curl \
 
 url=https://crousandgo.crous-poitiers.fr/larochelle/categorie-produit/sites-la-rochelle/ #URL Crous
 
-debut(){ #Ici on reinitialise tout les variables
+debut(){ #Reinitialisation de toutes les variables
     echo "Début script"
     rm -R tmp/ 2>/dev/null
     echo "0" > pause
@@ -15,31 +15,32 @@ debut(){ #Ici on reinitialise tout les variables
     nbrepas_tmp=0
     unset jl
     unset jl_ok
+    unset jl_type
     unset jl_notif
     unset jl_notifier
     declare -a jl
     declare -a jl_ok
+    declare -a jl_type
     declare -a jl_notif
     declare -a jl_notifier
 }
 
-download_index(){ #Met dans $code_html le code de la page principale 
+download_index(){ #Telecharge la page principale de vente et la met dans $code_html
     code_html=$(curl -s "$url")
 }
 
-get_link(){ #Détecte si des repas sont en ligne, renvoie $nb_repas disponible + liste des lien dispo
+get_link(){ #Détecte si des repas sont en ligne, renvoie $nb_repas disponible + $repas_link liste des lien dispo
 
-    #Extraction des url des repas.
-    #              affiche le code   Récupere les href        cherche la chaine         cut le href    enleve les doublons
+    #Extraction des url des repas:
+    #              affiche le code   Récupere les href        cherche la chaine \/       cut le href    enleve les doublons
     repas_links=$(echo $code_html | grep -oE 'href="([^"#]+)"'|grep 'repas-la-rochelle'| cut -d'"' -f2|uniq)
   
     #Compte les espaces
     nb_repas=$(expr $(echo $repas_links|grep -o ' ' | wc -l) + 1 )
 }
 
-get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont dispo ($jl) et stoke les page dans tpm/
-    jl=''
-    jl_type=''
+get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont dispo ($jl_type) et stokes les pages dans tpm/
+    jl_type='' #listes des jours abev leurs types
     rm -R tmp/ 2>/dev/null
     mkdir tmp/
     for link in $repas_links; do
@@ -123,13 +124,14 @@ while true ; do
         get_link
         echo "Dowload+get_link fait"
         get_jour
-        echo
         check_forms
         echo "Jour vérifié"
         if [ "$nbrepas_tmp" -lt "$nb_repas" ];then #Si y a de nouveau repas,
-            unset jl_notif
-            declare -a jl_notif
-            for k in ${jl_ok[@]};do #pr i parcourant tout les élément de jl_ok
+
+            unset jl_notif      #Reset les repas 
+            declare -a jl_notif #à envoyé en notif
+
+            for k in ${jl_ok[@]};do #pour k parcourant tout les élément de jl_ok
                 if grep -q "$k" <<< "${jl_notifier[*]}";then #si il sont déja ds les jours notifié
                     : #ne rien faire
                 else
@@ -139,8 +141,9 @@ while true ; do
         notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
         nbrepas_tmp=$nb_repas
         jl_notifier=("${jl_ok[@]}")
+        fi
 
-        fi #Si le nb de repas >9 aou que le contenue de pause est 1 on arrette le 
+        #Si le nb de repas >9 aou que le contenue de pause est 1 on arrette le 
         if [ "$nb_repas" -gt 9 ] || [ "$(cat pause)" -eq 1 ]; then
             break
         fi
