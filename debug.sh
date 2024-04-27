@@ -26,25 +26,26 @@ debut(){ #Reinitialisation de toutes les variables
 }
 
 download_index(){ #Telecharge la page principale de vente et la met dans $code_html
-    code_html=$(curl -s "$url")
+    #code_html=$(curl -s "$url")
+    :
 }
 
 get_link(){ #Détecte si des repas sont en ligne, renvoie $nb_repas disponible + $repas_link liste des lien dispo
 
     #Extraction des url des repas:
     #              affiche le code   Récupere les href        cherche la chaine \/       cut le href    enleve les doublons
-    repas_links=$(echo $code_html | grep -oE 'href="([^"#]+)"'|grep 'repas-la-rochelle'| cut -d'"' -f2|uniq)
+    #repas_links=$(echo $code_html | grep -oE 'href="([^"#]+)"'|grep 'repas-la-rochelle'| cut -d'"' -f2|uniq)
   
     #Compte les espaces
-    nb_repas=$(expr $(echo $repas_links|grep -o ' ' | wc -l) + 1 )
+    nb_repas=$(ls -l src/| wc -l)
 }
 
 get_jour(){ #Nécessite la liste des repas, renvoie la liste des jour qui sont dispo ($jl_type) et stokes les pages dans tpm/
-    jl_type='' #listes des jours avec leurs types
+    jl_type='' #listes des jours abev leurs types
     rm -R tmp/ 2>/dev/null
     mkdir tmp/
-    for link in $repas_links; do
-        code_temp=$(curl -sL "$link") #Telecharge la page
+    for fichier in src/*; do
+        code_temp=$(cat $fichier) #Telecharge la page
         traitement_temp=$(echo $code_temp |grep -oP '<h1.*?>(.*?)<\/h1>' | sed -e 's/<[^>]*>//g'|tr ' ' '_') #Récupere uniquement le contenue de H1 en remplacant par des tiret du bas les espaces
         jour=$(echo $traitement_temp |cut -d '_' -f 5) #Récupere le jour de la semaine
 
@@ -113,7 +114,7 @@ while true ; do
             break
         fi
         echo "Aucun repas disponible prochaine tentative dans 60s"
-        sleep 60
+        sleep 10
     done
     echo "$nb_repas repas disponibles"
     nb_repas=-1
@@ -138,6 +139,7 @@ while true ; do
                     jl_notif+=("$k") #sinon l'ajouter au truc qui partent en notif
                 fi
             done
+        echo ${jl_ok[@]}
         notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
         nbrepas_tmp=$nb_repas
         jl_notifier=("${jl_ok[@]}")
