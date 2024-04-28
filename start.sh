@@ -1,0 +1,1 @@
+./script_ok.sh >'LOG/'$(date '+%Y-%m-%d_%Hh-%Mm-%Ss')'.log'

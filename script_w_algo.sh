@@ -7,7 +7,7 @@ curl \
 
 url=https://crousandgo.crous-poitiers.fr/larochelle/categorie-produit/sites-la-rochelle/ #URL Crous
 
-debut(){ #Reinitialisation de toutes les variables
+reset(){ #Reinitialisation de toutes les variables
     echo "Début script"
     rm -R tmp/ 2>/dev/null
     echo "0" > pause
@@ -104,7 +104,7 @@ wait_samedi(){ #Attend le prochain samedi a 00h01
 #Début du programme principal
 
 while true ; do
-    debut
+    reset
     while true ; do #tant que nb_repas est strictement inférieur a 2
         date '+%Y-%m-%d %H:%M:%S'
         download_index
