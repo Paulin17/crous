@@ -122,6 +122,8 @@ while true ; do
     done
     echo $(date '+%y-%m-%d %H:%M:%S')" WARNING $nb_repas repas disponibles"
     while [ "$nb_repas" -lt 10 ]; do #Tant que le nombre de repas est inférieur a 10
+        download_index
+        download_secondaires
         #Affiche la date, télécharge le code, recupere les lien, en déduit les jour, et vérifie les forms 
         check_forms
         if [ "$nbrepas_tmp" -lt "$nb_repas" ];then #Si y a de nouveau repas,
@@ -150,8 +152,6 @@ while true ; do
         fi
         echo $(date '+%y-%m-%d %H:%M:%S')" NOTICE En attente de nouveau repas, prochaine tentative dans 60s"
         sleep 60
-        download_index
-        download_secondaires
     done
     wait_samedi
 done
