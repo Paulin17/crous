@@ -100,7 +100,7 @@ notif(){ #Prend un parametre un nombre de repas et un tableau contenant les jour
 }
 
 wait_samedi(){ #Attend le prochain samedi a 00h01
-    next_saturday=$(date -d 'next Saturday 00:01' +'%s')
+    next_saturday=$(date -d 'next Saturday 12:01' +'%s')
     current_time=$(date +'%s')
     time_to_wait=$((next_saturday - current_time))
     curl -H "Title: Attente jusqu'au prochain Samedi" -d "temp: $time_to_wait" ntfy.sh/debug_repas_crous 1> /dev/null 2>/dev/null #envoie une notification de démarrage
