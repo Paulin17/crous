@@ -96,7 +96,7 @@ wait_samedi(){ #Attend le prochain samedi a 00h01
     current_time=$(date +'%s')
     time_to_wait=$((next_saturday - current_time))
     curl -H "Title: Attente jusqu'au prochain Samedi" -d "temp: $time_to_wait" ntfy.sh/debug_repas_crous; 2>/dev/null #envoie une notification de démarrage
-    echo "Attente jusqu'au prochain samedi à 00h01, temp: $time_to_wait"
+    echo "Attente jusqu'au prochain samedi à 12h01, temp: $time_to_wait"
     sleep $time_to_wait
     curl -H "Title: Redémarage Script" -d "En attente de repas" ntfy.sh/debug_repas_crous; 2>/dev/null #envoie une notification de démarrage
 }
