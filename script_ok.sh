@@ -138,12 +138,12 @@ while true ; do
                     jl_notif+=("$k") #sinon l'ajouter au truc qui partent en notif
                 fi
             done
-        echo $(date '+%y-%m-%d %H:%M:%S')' INFO Préparation notif : nb-repas '$(("$nb_repas"-"$nbrepas_tmp"))
-        echo $(date '+%y-%m-%d %H:%M:%S')' INFO |-> repas : '"${jl_notif[@]}"
-        notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
-        echo $(date '+%y-%m-%d %H:%M:%S')' NOTICE Notification envoyée !'
-        nbrepas_tmp=$nb_repas
-        jl_notifier=("${jl_ok[@]}")
+            echo $(date '+%y-%m-%d %H:%M:%S')' INFO Préparation notif : nb-repas '$(("$nb_repas"-"$nbrepas_tmp"))
+            echo $(date '+%y-%m-%d %H:%M:%S')' INFO |-> repas : '"${jl_notif[@]}"
+            notif $(("$nb_repas"-"$nbrepas_tmp")) "${jl_notif[@]}"
+            echo $(date '+%y-%m-%d %H:%M:%S')' NOTICE Notification envoyée !'
+            nbrepas_tmp=$nb_repas
+            jl_notifier=("${jl_ok[@]}")
         fi
 
         #Si le nb de repas >9 aou que le contenue de pause est 1 on arrette le 
