@@ -31,7 +31,9 @@ reset(){
     echo $(date '+%y-%m-%d %H:%M:%S')" WARNING Reset script (variables,folder,pause)"
     echo "0" > pause
     unset dico_jour
+    unset order_dico_jour
     declare -g -A dico_jour
+    declare -g -a order_dico_jour
 }
 
 send_notif(){ #Prend un parametre un tableau contenant les jours et envoie une notification
@@ -91,6 +93,7 @@ while true ; do
                 type=$(grep -q "végétarien" <<< $traitement_temp && echo 'Végétarien' || echo 'Normal')
 
                 dico_jour["$traitement_temp"]=$(echo "$jour $date $mois $year $type"|tr ' ' '_') #Enregistre l'entré dans un dictionaire
+                order_dico_jour+=("$traitement_temp")
             fi
         fi
         
@@ -99,7 +102,7 @@ while true ; do
     unset notif
     declare -a notif
 
-    for jour in "${!dico_jour[@]}"; do
+    for jour in "${order_dico_jour[@]}"; do
         valeur="${dico_jour[$jour]}"
         if [[ "$valeur" != *@done ]]; then
             notif+=("$valeur")
