@@ -85,9 +85,9 @@ while true ; do
             mois=$(echo $traitement_temp |cut -d '_' -f 7)
             year=$(echo $traitement_temp |cut -d '_' -f 8)
         
-            current_date=$(date +%d-%m-%Y)
+            current_date=$(date +%Y-%m-%d)
             #On vérifie si le repas n'est pas dans le passé...
-            if [[ "$current_date" < "$date-${asso_mois[$mois]}-$year" ]]; then
+            if [[ "$current_date" < "year-${asso_mois[$mois]}-$date" ]]; then
                 #La date n'est pas encore passé
 
                 type=$(grep -q "végétarien" <<< $traitement_temp && echo 'Végétarien' || echo 'Normal')
