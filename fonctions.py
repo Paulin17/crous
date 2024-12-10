@@ -1,5 +1,4 @@
-import datetime
-
+import datetime,requests
 
 
 
@@ -15,3 +14,12 @@ def log(file: str, message: str, level: str = "INFO") -> None:
     print(log_message)
     with open(file, "a",encoding='UTF-8') as f:
         f.write(log_message + "\n")
+
+
+def notif(title,data,url="https://ntfy.sh/repas_crous",tags="warning"):
+    requests.post(url,
+        data=data,
+        headers={
+            "Title": title,
+            "Tags": tags
+        })
