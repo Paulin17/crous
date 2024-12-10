@@ -1,16 +1,18 @@
 import datetime,requests
-<<<<<<< Updated upstream
-=======
 from bs4 import BeautifulSoup
 
+
 def scrap(url):
+    '''en entree un url pour faire une requete'''
     return requests.get(url)
->>>>>>> Stashed changes
+
 
 def html_pars(url):
+    '''fonction pour parser du code html via une requete (scrap())'''
     return BeautifulSoup(scrap(url).content, 'html.parser')
 
 def find(html:str):
+    '''fonction pour trouver tous les repas disponibles'''
     return html.find_all("a", {"class": "ast-loop-product__link"})
 
 def log(file: str, message: str, level: str = "INFO") -> None:
