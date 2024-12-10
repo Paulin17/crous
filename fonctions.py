@@ -1,6 +1,17 @@
 import datetime,requests
+<<<<<<< Updated upstream
+=======
+from bs4 import BeautifulSoup
 
+def scrap(url):
+    return requests.get(url)
+>>>>>>> Stashed changes
 
+def html_pars(url):
+    return BeautifulSoup(scrap(url).content, 'html.parser')
+
+def find(html:str):
+    return html.find_all("a", {"class": "ast-loop-product__link"})
 
 def log(file: str, message: str, level: str = "INFO") -> None:
     """
